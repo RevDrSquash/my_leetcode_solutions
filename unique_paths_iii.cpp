@@ -33,6 +33,11 @@ public:
     
     int countPaths(vector<vector<int>>& grid, int length, const Point& point)
     {
+        if(point.X < 0 || point.X >= grid.size() || point.Y < 0 || point.Y >= grid[0].size())
+        {
+            return 0;
+        }
+        
         if(grid[point.X][point.Y] == 2)
         {
             if(length == targetLength)
@@ -51,45 +56,19 @@ public:
         else
         {
             int count = 0;
-            if(point.X > 0)
-            {
-                int old = grid[point.X][point.Y];
-                grid[point.X][point.Y] = -1;
-                
-                count += countPaths(grid, length + 1, {point.X - 1, point.Y});
-                
-                grid[point.X][point.Y] = old;
-            }
             
-            if(point.X < grid.size() - 1)
-            {
-                int old = grid[point.X][point.Y];
-                grid[point.X][point.Y] = -1;
-                
-                count += countPaths(grid, length + 1, {point.X + 1, point.Y});
-                
-                grid[point.X][point.Y] = old;
-            }
+            int old = grid[point.X][point.Y];
+            grid[point.X][point.Y] = -1;
             
-            if(point.Y > 0)
-            {
-                int old = grid[point.X][point.Y];
-                grid[point.X][point.Y] = -1;
-                
-                count += countPaths(grid, length + 1, {point.X, point.Y - 1});
-                
-                grid[point.X][point.Y] = old;
-            }
+            count += countPaths(grid, length + 1, {point.X - 1, point.Y});
             
-            if(point.Y < grid[0].size() - 1)
-            {
-                int old = grid[point.X][point.Y];
-                grid[point.X][point.Y] = -1;
+            count += countPaths(grid, length + 1, {point.X + 1, point.Y});
+            
+            count += countPaths(grid, length + 1, {point.X, point.Y - 1});
                 
-                count += countPaths(grid, length + 1, {point.X, point.Y + 1});
+            count += countPaths(grid, length + 1, {point.X, point.Y + 1});
                 
-                grid[point.X][point.Y] = old;
-            }
+            grid[point.X][point.Y] = old;
             
             return count;
         }
