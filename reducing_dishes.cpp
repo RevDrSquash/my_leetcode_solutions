@@ -1,3 +1,5 @@
+// https://leetcode.com/problems/reducing-dishes/
+
 class Solution {
     static bool decendingSort (int i,int j) { return (i>j); }
     
