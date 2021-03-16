@@ -2,7 +2,7 @@
 
 class Solution {
 protected:
-    unordered_map<string, string> m_mapURLs;
+    unordered_map<unsigned long, string> m_mapURLs;
     
     const string m_strBaseUrl = "http:////tinyurl.com//";
     
@@ -10,15 +10,14 @@ public:
     // Encodes a URL to a shortened URL.
     string encode(string longUrl)
     {
-        size_t hashedURL = hash<string>{}(longUrl);
+        unsigned long hashedURL = static_cast<unsigned long>(hash<string>{}(longUrl));
+        
+        m_mapURLs[hashedURL] = longUrl;
         
         stringstream stream;
-        stream << hex << hashedURL;
-        string strHash( stream.str() );
+        stream << m_strBaseUrl << hex << hashedURL;
         
-        m_mapURLs[strHash] = longUrl;
-        
-        return m_strBaseUrl + strHash;
+        return stream.str();
     }
 
     // Decodes a shortened URL to its original URL.
@@ -30,8 +29,8 @@ public:
             return "";
         
         string strHash = shortUrl.substr(hashStart + 1, string::npos);
+        unsigned long ulHash = stoul(strHash, 0, 16);
         
-        return m_mapURLs[strHash];
+        return m_mapURLs[ulHash];
     }
-    
 };
