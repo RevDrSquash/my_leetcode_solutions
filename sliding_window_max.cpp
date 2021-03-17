@@ -1,65 +1,56 @@
 // https://leetcode.com/problems/sliding-window-maximum/
 
-// to slow at the moment
-
 class Solution
 {
-    unordered_map<int, int> mapDistinctNums;
-    int windowMax = numeric_limits<int>::min();
+    deque<int> maxValueIdxTracker;
     
-    void addToWindow(int num)
+    void AddToWindow(const vector<int>& nums, int index)
     {
-        mapDistinctNums[num] += 1;
-            
-        if(num > windowMax)
+        if(maxValueIdxTracker.empty())
         {
-            windowMax = num;
+            maxValueIdxTracker.push_front(index);
+        }
+        else
+        {
+            while(!maxValueIdxTracker.empty() && nums[maxValueIdxTracker.front()] < nums[index])
+            {
+                maxValueIdxTracker.pop_front();
+            }
+            
+            maxValueIdxTracker.push_front(index);
         }
     }
     
-    void removeFromWindow(int num)
+    void RemoveFromWindow(int index)
     {
-        mapDistinctNums[num] -= 1;
-
-        if(mapDistinctNums[num] <= 0)
+        if(index >= maxValueIdxTracker.back())
         {
-            mapDistinctNums.erase(num);
-
-            // removed the old max so find the new max
-            if(num == windowMax)
-            {
-                unordered_map<int, int>::iterator itMax = max_element(mapDistinctNums.begin(), mapDistinctNums.end());
-                if(itMax != mapDistinctNums.end())
-                {
-                    windowMax = itMax->first;
-                }
-                else
-                {
-                    windowMax = numeric_limits<int>::min();
-                }
-            }
+            maxValueIdxTracker.pop_back();
         }
+    }
+    
+    int GetMaxInWindow(const vector<int>& nums)
+    {
+        return nums[maxValueIdxTracker.back()];
     }
     
 public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k)
     {
-        mapDistinctNums.reserve(k+1);
-        
         for(int idx = 0; idx < (k - 1); idx++)
         {
-            addToWindow(nums[idx]);
+            AddToWindow(nums, idx);
         }
         
         vector<int> answer(nums.size() - k + 1);
         
         for(int idx = (k - 1), idxStart = 0; idx < nums.size(); idx++, idxStart++)
         {
-            addToWindow(nums[idx]);
+            AddToWindow(nums, idx);
             
-            answer[idxStart] = windowMax;
+            answer[idxStart] = GetMaxInWindow(nums);
             
-            removeFromWindow(nums[idxStart]);
+            RemoveFromWindow(idxStart);
         }
         
         return answer;
