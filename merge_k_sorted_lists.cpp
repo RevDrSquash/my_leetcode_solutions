@@ -55,8 +55,6 @@ class Solution
 public:
     ListNode* mergeKLists(vector<ListNode*>& lists)
     {
-        m_heap.reserve(lists.size() * 500);
-        
         ListNode* pAnswerHead = nullptr;
         ListNode* pPrevNode = nullptr;
         
