@@ -2,81 +2,42 @@
 
 class Solution
 {
-    vector<optional<int>> m_maxBuyCache;
-    vector<optional<int>> m_maxSellCache;
+    static const int COOLDOWN = 1;
     
 public:
     int maxProfit(vector<int>& prices)
     {
-        m_maxBuyCache.resize(prices.size());
-        m_maxSellCache.resize(prices.size());
-        
-        return maxBuy(prices, 0);
-    }
-    
-    int maxBuy(vector<int>& prices, int idxStart)
-    {
-        if(idxStart >= prices.size())
+        if(prices.size() <= 1)
         {
             return 0;
         }
         
-        if(m_maxBuyCache[idxStart])
+        if(prices.size() == 2)
         {
-            return *m_maxBuyCache[idxStart];
+            int profit = prices[1] - prices[0];
+            return max(profit, 0);
         }
         
-        int valMaxBuy = 0;
-        int idxMaxBuy = idxStart;
-        for(int idx = idxStart; idx < prices.size(); idx++)
+        int results[prices.size()][2];
+        
+        results[0][0] = 0;          // didn't buy first stock
+        results[0][1] = -prices[0]; // did buy the first stock
+        
+        // either buy the stock on day 1 and sell it right away or don't buy it on day 1 or 2
+        results[1][0] = max(results[0][1] + prices[1], results[0][0]);
+        
+        // either buy the stock day 2 or keep the stock we bought day 1
+        results[1][1] = max(-prices[1], results[0][1]);
+        
+        for(int i = 2; i < prices.size(); i++)
         {
-            int newBuyValue = -prices[idx] + maxSell(prices, idx + 1);
+            // either sold the stock today or didn't have have and don't buy
+            results[i][0] = max(results[i-1][1] + prices[i], results[i-1][0]);
             
-            if(newBuyValue > valMaxBuy)
-            {
-                valMaxBuy = newBuyValue;
-                idxMaxBuy = idx;
-            }
+            // either buy a stock today or hold the one from yesterday
+            results[i][1] = max(results[i-1-COOLDOWN][0] - prices[i], results[i-1][1]);
         }
         
-        for(int idx = idxStart; idx <= idxMaxBuy; idx++)
-        {
-            m_maxBuyCache[idx] = valMaxBuy;
-        }
-        
-        return valMaxBuy;
-    }
-    
-    int maxSell(vector<int>& prices, int idxStart)
-    {
-        if(idxStart >= prices.size())
-        {
-            return 0;
-        }
-        
-        if(m_maxSellCache[idxStart])
-        {
-            return *m_maxSellCache[idxStart];
-        }
-        
-        int valMaxSell = 0;
-        int idxMaxSell = idxStart;
-        for(int idx = idxStart; idx < prices.size(); idx++)
-        {
-            int newSellValue = prices[idx] + maxBuy(prices, idx + 2);
-            
-            if(newSellValue > valMaxSell)
-            {
-                valMaxSell = newSellValue;
-                idxMaxSell = idx;
-            }
-        }
-        
-        for(int idx = idxStart; idx <= idxMaxSell; idx++)
-        {
-            m_maxSellCache[idx] = valMaxSell;
-        }
-        
-        return valMaxSell;
+        return results[prices.size()-1][0];
     }
 };
