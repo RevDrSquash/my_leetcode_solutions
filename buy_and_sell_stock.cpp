@@ -27,6 +27,7 @@ public:
         }
         
         int valMaxBuy = 0;
+        int idxMaxBuy = idxStart;
         for(int idx = idxStart; idx < prices.size(); idx++)
         {
             int newBuyValue = -prices[idx] + maxSell(prices, idx + 1);
@@ -34,10 +35,15 @@ public:
             if(newBuyValue > valMaxBuy)
             {
                 valMaxBuy = newBuyValue;
+                idxMaxBuy = idx;
             }
         }
         
-        m_maxBuyCache[idxStart] = valMaxBuy;
+        for(int idx = idxStart; idx <= idxMaxBuy; idx++)
+        {
+            m_maxBuyCache[idx] = valMaxBuy;
+        }
+        
         return valMaxBuy;
     }
     
@@ -54,6 +60,7 @@ public:
         }
         
         int valMaxSell = 0;
+        int idxMaxSell = idxStart;
         for(int idx = idxStart; idx < prices.size(); idx++)
         {
             int newSellValue = prices[idx] + maxBuy(prices, idx + 2);
@@ -61,10 +68,15 @@ public:
             if(newSellValue > valMaxSell)
             {
                 valMaxSell = newSellValue;
+                idxMaxSell = idx;
             }
         }
         
-        m_maxSellCache[idxStart] = valMaxSell;
+        for(int idx = idxStart; idx <= idxMaxSell; idx++)
+        {
+            m_maxSellCache[idx] = valMaxSell;
+        }
+        
         return valMaxSell;
     }
 };
