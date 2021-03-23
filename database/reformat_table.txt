@@ -1,0 +1,54 @@
+# https://leetcode.com/problems/reformat-department-table/
+
+SELECT
+    *
+FROM
+    ( SELECT DISTINCT id FROM Department ) dept_ids
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Jan_Revenue FROM Department WHERE month = 'Jan'
+    ) January USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Feb_Revenue FROM Department WHERE month = 'Feb'
+    ) February USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Mar_Revenue FROM Department WHERE month = 'Mar'
+    ) March USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Apr_Revenue FROM Department WHERE month = 'Apr'
+    ) April USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS May_Revenue FROM Department WHERE month = 'May'
+    ) May USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Jun_Revenue FROM Department WHERE month = 'Jun'
+    ) June USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Jul_Revenue FROM Department WHERE month = 'Jul'
+    ) July USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Aug_Revenue FROM Department WHERE month = 'Aug'
+    ) August USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Sep_Revenue FROM Department WHERE month = 'Sep'
+    ) September USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Oct_Revenue FROM Department WHERE month = 'Oct'
+    ) October USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Nov_Revenue FROM Department WHERE month = 'Nov'
+    ) November USING (id)
+    LEFT JOIN
+    (
+        SELECT id, revenue AS Dec_Revenue FROM Department WHERE month = 'Dec'
+    ) December USING (id)
