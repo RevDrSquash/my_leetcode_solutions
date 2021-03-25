@@ -1,9 +1,15 @@
 # https://leetcode.com/problems/classes-more-than-5-students/
 
-SELECT studentCount.class FROM
-    (
+# sub-query solution
+SELECT studentCount.class FROM (
         SELECT class, COUNT(DISTINCT(student)) AS numberOfStudents
         FROM courses
         GROUP BY class
     ) AS studentCount
 WHERE numberOfStudents >= 5
+
+# HAVING solution
+SELECT class
+FROM courses
+GROUP BY class
+HAVING COUNT(DISTINCT(student)) >= 5
