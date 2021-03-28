@@ -1,0 +1,6 @@
+# https://leetcode.com/problems/rising-temperature/
+
+SELECT today.Id
+FROM Weather today, Weather yesterday
+WHERE DATEDIFF(today.RecordDate, yesterday.RecordDate) = 1
+AND today.Temperature > yesterday.Temperature
