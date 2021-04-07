@@ -1,7 +1,6 @@
 # https://leetcode.com/problems/duplicate-emails/
 
-SELECT Email FROM (
-    SELECT Id, Email FROM Person
-    GROUP BY Email
-    HAVING COUNT(Id) > 1
-) AS temp
+SELECT Email
+FROM Person
+GROUP BY Email
+HAVING COUNT(Email) > 1
