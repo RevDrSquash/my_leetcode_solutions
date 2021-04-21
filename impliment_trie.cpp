@@ -7,54 +7,44 @@ class Trie
     public:
         TrieNode()
         {
-            
+            m_keys.fill(nullptr);
         }
         
-        void Insert(const string& word, string::const_iterator it)
+        ~TrieNode()
         {
-            if(it == word.end())
+            for(TrieNode*& pNode : m_keys)
             {
-                m_words.emplace(word);
-            }
-            else
-            {
-                if(m_children.count(*it) < 1)
+                if(pNode != nullptr)
                 {
-                    m_children[*it] = make_shared<TrieNode>();
+                    delete pNode;
+                    pNode = nullptr;
                 }
-                
-                m_children[*it]->Insert(word, it+1);
             }
         }
         
-        bool HasWord(const string& word)
+        TrieNode* GetChild(char c)
         {
-            return m_words.count(word) > 0;
+            return m_keys[c - 'a'];
         }
         
-        shared_ptr<TrieNode> FindNode(const string& word, string::const_iterator it)
+        void AddChild(char c, TrieNode* pNode)
         {
-            if(m_children.count(*it) > 0)
-            {
-                string::const_iterator itNext = it+1;
-                if(itNext == word.end())
-                {
-                    return m_children[*it];
-                }
-                else
-                {
-                    return m_children[*it]->FindNode(word, itNext);
-                }
-            }
-            else
-            {
-                return nullptr;
-            }
+            m_keys[c - 'a'] = pNode;
+        }
+        
+        void SetEnd(bool bEnd)
+        {
+            m_bEnd = bEnd;
+        }
+        
+        bool GetEnd()
+        {
+            return m_bEnd;
         }
         
     private:
-        unordered_map<char, shared_ptr<TrieNode>> m_children;
-        set<string> m_words;
+        array<TrieNode*, 26> m_keys;
+        bool m_bEnd = false;
     };
     
 public:
@@ -67,28 +57,56 @@ public:
     /** Inserts a word into the trie. */
     void insert(string word)
     {
-        m_head.Insert(word, word.begin());
+        TrieNode* pNode = &m_head;
+        for(const char& c : word)
+        {
+            TrieNode* pChild = pNode->GetChild(c);
+            if(pChild == nullptr)
+            {
+                pChild = new TrieNode();
+                pNode->AddChild(c, pChild);
+            }
+            
+            pNode = pChild;
+        }
+        
+        pNode->SetEnd(true);
     }
     
     /** Returns if the word is in the trie. */
     bool search(string word)
     {
-        shared_ptr<TrieNode> pNode = m_head.FindNode(word, word.begin());
-        if(pNode != nullptr)
+        TrieNode* pNode = &m_head;
+        for(const char& c : word)
         {
-            return pNode->HasWord(word);
+            TrieNode* pChild = pNode->GetChild(c);
+            if(pChild == nullptr)
+            {
+                return false;
+            }
+            
+            pNode = pChild;
         }
-        else
-        {
-            return false;
-        }
+        
+        return pNode->GetEnd();
     }
     
     /** Returns if there is any word in the trie that starts with the given prefix. */
     bool startsWith(string prefix)
     {
-        shared_ptr<TrieNode> pNode = m_head.FindNode(prefix, prefix.begin());
-        return pNode != nullptr;
+        TrieNode* pNode = &m_head;
+        for(const char& c : prefix)
+        {
+            TrieNode* pChild = pNode->GetChild(c);
+            if(pChild == nullptr)
+            {
+                return false;
+            }
+            
+            pNode = pChild;
+        }
+        
+        return true;
     }
     
 private:
