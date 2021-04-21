@@ -20,11 +20,19 @@ public:
     /** Returns a random shuffling of the array. */
     vector<int> shuffle()
     {
-        // obtain a time-based seed:
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-
         vector<int> vRet = m_original;
-        std::shuffle(vRet.begin(), vRet.end(), std::default_random_engine(seed));
+        
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::default_random_engine generator(seed);
+        
+        for(int idx = 0; idx < vRet.size(); idx++)
+        {
+            std::uniform_int_distribution<int> distribution(idx,vRet.size()-1);
+            int swapIndex = distribution(generator);
+            swap(vRet[idx], vRet[swapIndex]);
+        }
+        
+        //std::shuffle(vRet.begin(), vRet.end(), std::default_random_engine(seed));
         
         return vRet;
     }
